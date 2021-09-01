@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Little Blue Gopher</title>
+</head>
+<body style="background-color: black; color: antiquewhite; font-family: sans-serif;">
+
+    <div id="Title" style="text-align: center;">
+        <h1 style="margin-top: 5%;">
+            {{.Title}}
+        </h1>
+    
+        <p style="margin-bottom: 5%;">
+            By Gibran Herrera 🐙
+        </p>
+    </div>
+
+    <div id="Text" style="text-align: justify; margin-left: 15%; margin-right: 15%;">
+        {{range .Story}}
+            <p style="font-size: large;">
+                {{.}}
+            </p>
+        {{end}}
+    </div>
+
+    <div id="Options" style="text-align: center; margin-top: 5%;">
+        <h3 style="color: burlywood;">
+            What would you do next?
+        </h3>
+        
+        {{range .Options}}
+            <a href={{.Arc}} style="color: rgb(221, 194, 157);">
+                {{.Text}}
+            </a>
+            <br><br>
+        {{end}}
+    </div>
+
+</body>
+</html>
