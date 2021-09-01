@@ -2,15 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
 )
-
-type Message struct {
-	Message string
-	Code    int
-}
 
 type Option struct {
 	Text string `json:"text"`
@@ -29,7 +25,28 @@ func check(e error) {
 	}
 }
 
+func storyHandler(intro Arc, templ *template.Template) http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		templ.Execute(rw, intro)
+	}
+}
+
+func defaultMux(stories map[string]Arc, templ *template.Template) *http.ServeMux {
+	mux := http.NewServeMux()
+
+	for key, value := range stories {
+		if key == "intro" {
+			key = ""
+		}
+
+		mux.HandleFunc(fmt.Sprintf("/%s", key), storyHandler(value, templ))
+	}
+
+	return mux
+}
+
 func main() {
+
 	data, err := os.ReadFile("Story/story.json")
 	check(err)
 
@@ -40,13 +57,10 @@ func main() {
 	err = json.Unmarshal(data, &stories)
 	check(err)
 
+	// Establishes the template that will execute
 	tmpl := template.Must(template.ParseFiles("Templates/story.html"))
 
-	for key, _ := range stories {
-		http.HandleFunc("/"+key, func(rw http.ResponseWriter, r *http.Request) {
-			tmpl.Execute(rw, stories[key])
-		})
-	}
+	mux := defaultMux(stories, tmpl)
 
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000", mux)
 }
