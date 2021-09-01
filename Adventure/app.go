@@ -31,7 +31,7 @@ func storyHandler(intro Arc, templ *template.Template) http.HandlerFunc {
 	}
 }
 
-func defaultMux(stories map[string]Arc, templ *template.Template) *http.ServeMux {
+func storyMux(stories map[string]Arc, templ *template.Template) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	for key, value := range stories {
@@ -60,7 +60,8 @@ func main() {
 	// Establishes the template that will execute
 	tmpl := template.Must(template.ParseFiles("Templates/story.html"))
 
-	mux := defaultMux(stories, tmpl)
+
+	mux := storyMux(stories, tmpl)
 
 	http.ListenAndServe(":8000", mux)
 }
