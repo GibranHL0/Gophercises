@@ -1,67 +1,21 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
-	"os"
+
+	"github.com/GibranHL0/Gophercises/Adventure/Utils"
+	"github.com/GibranHL0/Gophercises/Adventure/Handlers"
 )
 
-type Option struct {
-	Text string `json:"text"`
-	Arc  string `json:"arc"`
-}
-
-type Arc struct {
-	Title   string   `json:"title"`
-	Story   []string `json:"story"`
-	Options []Option `json:"options"`
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func storyHandler(intro Arc, templ *template.Template) http.HandlerFunc {
-	return func(rw http.ResponseWriter, r *http.Request) {
-		templ.Execute(rw, intro)
-	}
-}
-
-func storyMux(stories map[string]Arc, templ *template.Template) *http.ServeMux {
-	mux := http.NewServeMux()
-
-	for key, value := range stories {
-		if key == "intro" {
-			key = ""
-		}
-
-		mux.HandleFunc(fmt.Sprintf("/%s", key), storyHandler(value, templ))
-	}
-
-	return mux
-}
-
 func main() {
+	// Obtain the story
+	story := utils.GetStory()
 
-	data, err := os.ReadFile("Story/story.json")
-	check(err)
-
-	// Create map that will hold all stories.
-	stories := make(map[string]Arc, 0)
-
-	// Unmarshall the json and store the values in the map.
-	err = json.Unmarshal(data, &stories)
-	check(err)
-
-	// Establishes the template that will execute
+	// Establishes the template that will execute the Handler
 	tmpl := template.Must(template.ParseFiles("Templates/story.html"))
 
-
-	mux := storyMux(stories, tmpl)
+	mux := handlers.StoryMux(story, tmpl)
 
 	http.ListenAndServe(":8000", mux)
 }
