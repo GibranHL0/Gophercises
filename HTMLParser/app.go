@@ -17,7 +17,7 @@ func main() {
 
 	r := strings.NewReader(string(data))
 
-	links, err := Link.Parse(r)
+	links, err := link.Parse(r)
 
 	if err != nil {
 		panic(err)
