@@ -2,6 +2,7 @@ package site
 
 import (
 	"encoding/xml"
+	"strings"
 
 	link "github.com/GibranHL0/Gophercises/HTMLParser/Link"
 )
@@ -22,11 +23,11 @@ func ConvertToURLs(links []link.Link, site string) []Url {
 	for _, link := range links {
 		url := link.Href
 
-		if len(url) < 1 {
+		if len(url) < 1 || url[0] == '#' || strings.Contains(url, "mailto"){
 			continue
 		}
 
-		if url[0] == '/' {
+		if url[0] == '/'{
 			url = site + link.Href
 		}
 
